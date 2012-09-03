@@ -11,18 +11,23 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface ClockView : UIView {
-
 	CALayer *containerLayer;
 	CALayer *hourHand;
 	CALayer *minHand;
 	CALayer *secHand;
 	NSTimer *timer;
-
+  
+  NSInteger hourValue;
+  NSInteger secValue;
+  NSInteger minValue;
 }
 
 //basic methods
 - (void)start;
 - (void)stop;
+
+//extended methods
+- (void)reverse;
 
 //customize appearence
 - (void)setHourHandImage:(CGImageRef)image;
