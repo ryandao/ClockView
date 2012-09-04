@@ -91,25 +91,31 @@
 
 float Degrees2Radians(float degrees) { return degrees * M_PI / 180; }
 
-//timer callback
-- (void) updateClock:(NSTimer *)theTimer{
-	
-	NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:[NSDate date]];
-	NSInteger seconds = [dateComponents second];
-	NSInteger minutes = [dateComponents minute];
-	NSInteger hours = [dateComponents hour];
+- (void) updateTimeValue {
+  NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:[NSDate date]];
+	secValue = [dateComponents second];
+	minValue = [dateComponents minute];
+	hourValue = [dateComponents hour];
 	//NSLog(@"raw: hours:%d min:%d secs:%d", hours, minutes, seconds);
-	if (hours > 12) hours -=12; //PM
+	if (hourValue > 12) hourValue -=12; //PM
+}
 
+- (void) updateClockView {
 	//set angles for each of the hands
-	CGFloat secAngle = Degrees2Radians(seconds/60.0*360);
-	CGFloat minAngle = Degrees2Radians(minutes/60.0*360);
-	CGFloat hourAngle = Degrees2Radians(hours/12.0*360) + minAngle/12.0;
+	CGFloat secAngle = Degrees2Radians(secValue/60.0*360);
+	CGFloat minAngle = Degrees2Radians(minValue/60.0*360);
+	CGFloat hourAngle = Degrees2Radians(hourValue/12.0*360) + minAngle/12.0;
 	
 	//reflect the rotations + 180 degres since CALayers coordinate system is inverted
 	secHand.transform = CATransform3DMakeRotation (secAngle+M_PI, 0, 0, 1);
 	minHand.transform = CATransform3DMakeRotation (minAngle+M_PI, 0, 0, 1);
 	hourHand.transform = CATransform3DMakeRotation (hourAngle+M_PI, 0, 0, 1);
+}
+
+//timer callback
+- (void) updateClock:(NSTimer *)theTimer{
+  [self updateTimeValue];
+  [self updateClockView];
 }
 
 #pragma mark - Overrides
