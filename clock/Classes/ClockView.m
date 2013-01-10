@@ -11,6 +11,7 @@
 
 
 @implementation ClockView
+@synthesize currentClockDate;
 
 #pragma mark - Public Methods
 
@@ -23,6 +24,10 @@
 {
 	[timer invalidate];
 	timer = nil;
+}
+
+- (void)reverse {
+  timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateClockReverse:) userInfo:nil repeats:YES];
 }
 
 //customize appearence
@@ -92,7 +97,7 @@
 float Degrees2Radians(float degrees) { return degrees * M_PI / 180; }
 
 - (void) updateTimeValue {
-  NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:[NSDate date]];
+  NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit) fromDate:currentClockDate];
 	secValue = [dateComponents second];
 	minValue = [dateComponents minute];
 	hourValue = [dateComponents hour];
@@ -114,6 +119,17 @@ float Degrees2Radians(float degrees) { return degrees * M_PI / 180; }
 
 //timer callback
 - (void) updateClock:(NSTimer *)theTimer{
+  currentClockDate = [NSDate date];
+  [self updateTimeValue];
+  [self updateClockView];
+}
+
+- (void) updateClockReverse: (NSTimer *)theTimer{  
+  if (! currentClockDate) {
+    currentClockDate = [NSDate date];
+  }
+  
+  currentClockDate = [currentClockDate dateByAddingTimeInterval:-1.0];
   [self updateTimeValue];
   [self updateClockView];
 }
@@ -173,7 +189,6 @@ float Degrees2Radians(float degrees) { return degrees * M_PI / 180; }
 {
 	self = [super initWithFrame:frame];
 	if (self) {
-		
 		containerLayer = [CALayer layer];
 		hourHand = [CALayer layer];
 		minHand = [CALayer layer];

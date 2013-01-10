@@ -20,7 +20,10 @@
   NSInteger hourValue;
   NSInteger secValue;
   NSInteger minValue;
+  NSString *test;
 }
+
+@property (nonatomic, strong) NSDate *currentClockDate;
 
 //basic methods
 - (void)start;
